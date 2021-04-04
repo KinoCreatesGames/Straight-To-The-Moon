@@ -7,18 +7,22 @@ class GameOverSubState extends FlxSubState {
 	public var gameOverText:FlxText;
 	public var continueButton:TextButton;
 	public var toTitleButton:TextButton;
+	public var scoreText:FlxText;
+	public var displayScore:Int;
 
 	private var initialPosition:Float;
 	private var timeCount:Float;
 
-	public function new() {
+	public function new(score:Int) {
 		super();
+		displayScore = score;
 	}
 
 	override public function create() {
 		super.create();
 		timeCount = 0;
 		createBackground();
+		createScoreText();
 		createCongrats();
 		createButtons();
 	}
@@ -36,6 +40,13 @@ class GameOverSubState extends FlxSubState {
 			color: KColor.WHITE
 		});
 		add(background);
+	}
+
+	public function createScoreText() {
+		var yPadding = 60;
+		scoreText = new FlxText(background.x, background.y + yPadding, -1,
+			'High Score: ${displayScore}', Globals.FONT_L);
+		add(scoreText);
 	}
 
 	public function createCongrats() {

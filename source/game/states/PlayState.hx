@@ -20,6 +20,9 @@ class PlayState extends FlxState {
 	public var score:Int = 0;
 	public var fuel:Float = 1000;
 	public var stars:Stars;
+	public var music:FlxSound;
+	public var getFuelSound:FlxSound;
+	public var takeDamageSound:FlxSound;
 
 	public static inline var SPAWN_TIME:Float = 1.75;
 	public static inline var ITEM_SPAWN_TIME:Float = 10;
@@ -27,11 +30,22 @@ class PlayState extends FlxState {
 
 	override public function create() {
 		super.create();
+		createSounds();
 		createStarField();
 		createPlayer();
 		createEnemies();
 		createItems();
 		createUI();
+	}
+
+	public function createSounds() {
+		// music = FlxG.sound.load(AssetPaths.NanoBeats__ogg);
+		getFuelSound = FlxG.sound.load(AssetPaths.get_fuel__wav);
+		takeDamageSound = FlxG.sound.load(AssetPaths.impact__wav);
+		if (FlxG.sound.music.playing) {
+			FlxG.sound.music.stop();
+		}
+		FlxG.sound.playMusic(AssetPaths.NanoBeats__ogg, 1, true);
 	}
 
 	public function createStarField() {
@@ -117,9 +131,23 @@ class PlayState extends FlxState {
 
 	public function processLevel(elapsed:Float) {
 		processCollisions();
+
 		// Game Over State
 		if (fuel <= 0) {
-			openSubState(new GameOverSubState());
+			var save = new FlxSave();
+			var currentScore = score;
+			if (save.bind('HighScore')) {
+				var highScore = save.data.highScore;
+				// Replace score with high score if score is better than high score
+				if (highScore > score) {
+					currentScore = highScore;
+				} else {
+					save.data.highScore = score;
+				}
+			}
+
+			save.close();
+			openSubState(new GameOverSubState(currentScore));
 		}
 
 		// No Win State
@@ -131,11 +159,13 @@ class PlayState extends FlxState {
 		FlxG.overlap(enemyGrp, enemyGrp, enemyTouchEnemy);
 	}
 
-	public function playerTouchEnemy(player:Player, enemy:Enemy) {
+	public function playerTouchEnemy(playerSprite:FlxSprite, enemy:Enemy) {
 		enemy.kill();
 		// Fuel Damage & Potential Slow Down
 		fuel -= FUEL_DMG;
 		fuel = fuel.clampf(0, FlxMath.MAX_VALUE_INT);
+		takeDamageSound.play();
+		this.player.takeDamage(0);
 		hud.updateFuel(Math.ceil(fuel));
 	}
 
@@ -146,6 +176,9 @@ class PlayState extends FlxState {
 				fuel += FuelCell.FUEL_AMOUNT;
 			case _:
 				// Do nothing otherwise
+		}
+		if (getFuelSound.playing == false) {
+			getFuelSound.play();
 		}
 		item.kill();
 	}

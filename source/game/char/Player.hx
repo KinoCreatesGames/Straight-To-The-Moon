@@ -18,6 +18,8 @@ class Player extends FlxTypedGroup<FlxBasic> {
 	public static inline var FALL_SPD:Float = 250;
 	public static inline var MAX_Y:Float = 250;
 	public static inline var MAX_X:Float = 150;
+	public static inline var THRUST_MAX:Int = 1000;
+	public static inline var THRUST_MIN:Int = 800;
 
 	public function new(x:Float, y:Float) {
 		super();
@@ -47,7 +49,9 @@ class Player extends FlxTypedGroup<FlxBasic> {
 
 	public function createThrusters(position:FlxPoint) {
 		thrusters = new FlxEmitter(position.x, position.y + rocket.height);
-
+		thrusters.acceleration.set(0, THRUST_MIN, 0, THRUST_MAX);
+		thrusters.makeParticles(2, 2, KColor.WHITE, 500);
+		thrusters.drag.set(0, 200);
 		add(thrusters);
 	}
 
@@ -79,9 +83,14 @@ class Player extends FlxTypedGroup<FlxBasic> {
 		var newAngle = -90;
 		if (thrusting) {
 			currentAcceleration += (SPD * elapsed);
+			if (thrusters.emitting == false) {
+				thrusters.start(false, 0.030, 0);
+			}
+			thrusters.emitting = true;
 		} else {
 			currentAcceleration -= elapsed * FALL_SPD;
 			currentAcceleration.clampf(-100, FlxMath.MAX_VALUE_INT);
+			thrusters.emitting = false;
 		}
 
 		if (left || right) {
@@ -101,6 +110,7 @@ class Player extends FlxTypedGroup<FlxBasic> {
 		// Cap Velocity
 		rocket.velocity.x = rocket.velocity.x.clampf(-MAX_X, MAX_X);
 		rocket.velocity.y = rocket.velocity.y.clampf(-MAX_Y, MAX_Y);
+		thrusters.setPosition(rocket.x, rocket.y + rocket.height);
 		// trace(rocket.velocity);
 		rocket.bound(); // Keep within screenspace
 	}

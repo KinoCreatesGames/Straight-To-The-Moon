@@ -95,9 +95,9 @@ class TitleState extends FlxState {
 		creditsButton.canClick = false;
 		creditsButton.alpha = 0;
 		add(playButton);
-		add(continueButton);
-		add(optionsButton);
-		add(creditsButton);
+		// add(continueButton);
+		// add(optionsButton);
+		// add(creditsButton);
 		#if desktop
 		exitButton.canClick = false;
 		exitButton.alpha = 0;
@@ -155,10 +155,10 @@ class TitleState extends FlxState {
 	}
 
 	public function clickStart() {
-		// var introText = DepotData.Cutscene.lines.getByFn((el) ->
-		// 	el.name == 'Intro');
-		// FlxG.switchState(new CutsceneState(new HubState(),
-		// 	introText.cutsceneText));
+		FlxG.camera.fade((KColor.RICH_BLACK), .75, () -> {
+			FlxG.switchState(new PlayState());
+			FlxG.camera.fade(KColor.RICH_BLACK, .75, true);
+		});
 	}
 
 	public function clickContinue() {
@@ -184,7 +184,7 @@ class TitleState extends FlxState {
 		var textSize = 12;
 		var controlsText = new FlxText(20, FlxG.height - 100, textWidth,
 			'How To Move:
-UP: W/UP
+Z for thrust (Move Up)
 Left/Right: A/Left, S/Right', textSize);
 		add(controlsText);
 	}
