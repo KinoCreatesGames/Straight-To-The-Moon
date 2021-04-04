@@ -42,7 +42,7 @@ class PlayState extends FlxState {
 		// music = FlxG.sound.load(AssetPaths.NanoBeats__ogg);
 		getFuelSound = FlxG.sound.load(AssetPaths.get_fuel__wav);
 		takeDamageSound = FlxG.sound.load(AssetPaths.impact__wav);
-		if (FlxG.sound.music.playing) {
+		if (FlxG.sound.music != null && FlxG.sound.music.playing) {
 			FlxG.sound.music.stop();
 		}
 		FlxG.sound.playMusic(AssetPaths.NanoBeats__ogg, 1, true);

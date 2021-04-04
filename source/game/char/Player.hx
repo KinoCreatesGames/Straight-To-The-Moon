@@ -13,7 +13,7 @@ class Player extends FlxTypedGroup<FlxBasic> {
 	public var invincible:Bool;
 	public var currentAcceleration:Float;
 
-	public static inline var SPD:Float = 150;
+	public static inline var SPD:Float = 300;
 	public static inline var INVINCIBILITY_TIME:Float = .75;
 	public static inline var FALL_SPD:Float = 250;
 	public static inline var MAX_Y:Float = 250;
@@ -40,7 +40,7 @@ class Player extends FlxTypedGroup<FlxBasic> {
 
 	public function createRocket(position:FlxPoint) {
 		rocket = new FlxSprite(position.x, position.y);
-		rocket.makeGraphic(4, 8, KColor.WHITE);
+		rocket.loadGraphic(AssetPaths.ship_sprite__png);
 		rocket.drag.x = rocket.drag.y = 600;
 		// Max Velocity must be set to cap velocity
 		// But has to be called in the update movement function
@@ -89,7 +89,8 @@ class Player extends FlxTypedGroup<FlxBasic> {
 			thrusters.emitting = true;
 		} else {
 			currentAcceleration -= elapsed * FALL_SPD;
-			currentAcceleration.clampf(-100, FlxMath.MAX_VALUE_INT);
+			currentAcceleration = currentAcceleration.clampf(-100,
+				FlxMath.MAX_VALUE_INT);
 			thrusters.emitting = false;
 		}
 
@@ -110,7 +111,8 @@ class Player extends FlxTypedGroup<FlxBasic> {
 		// Cap Velocity
 		rocket.velocity.x = rocket.velocity.x.clampf(-MAX_X, MAX_X);
 		rocket.velocity.y = rocket.velocity.y.clampf(-MAX_Y, MAX_Y);
-		thrusters.setPosition(rocket.x, rocket.y + rocket.height);
+		thrusters.setPosition(rocket.x + (rocket.width / 2),
+			rocket.y + rocket.height);
 		// trace(rocket.velocity);
 		rocket.bound(); // Keep within screenspace
 	}

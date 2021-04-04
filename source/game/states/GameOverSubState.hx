@@ -46,6 +46,8 @@ class GameOverSubState extends FlxSubState {
 		var yPadding = 60;
 		scoreText = new FlxText(background.x, background.y + yPadding, -1,
 			'High Score: ${displayScore}', Globals.FONT_L);
+		scoreText.screenCenterHorz();
+		scoreText.y += 10;
 		add(scoreText);
 	}
 

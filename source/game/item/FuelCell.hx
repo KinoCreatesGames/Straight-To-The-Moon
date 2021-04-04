@@ -7,6 +7,6 @@ class FuelCell extends Item {
 
 	public function new(x:Float, y:Float) {
 		super(x, y);
-		makeGraphic(8, 8, KColor.BEAU_BLUE);
+		loadGraphic(AssetPaths.fuel_cell__png);
 	}
 }
